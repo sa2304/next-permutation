@@ -6,9 +6,40 @@
 using namespace std;
 
 class Solution {
+  bool permuteToNextNumber(vector<int> &nums, int offset) {
+    auto tail_begin = nums.begin() + offset + 1;
+    sort(tail_begin, nums.end());
+    auto iter = upper_bound(tail_begin, nums.end(), nums[offset]);
+    if (nums.end() != iter) {
+      swap(nums[offset], *iter);
+      sort(tail_begin, nums.end());
+      return true;
+    }
+
+    reverse(tail_begin, nums.end());
+    return false;
+  }
+
+  bool nextPermutation(vector<int> &nums, int offset) {
+    const int len = nums.size() - offset;
+    if (2 == len) {
+      if (nums[nums.size() - 2] < nums.back()) {
+        swap(nums[nums.size() - 2], nums.back());
+        return true;
+      } else { return false; }
+    } else if (2 < len) {
+      return nextPermutation(nums, offset + 1)
+          or permuteToNextNumber(nums, offset);
+    }
+
+    return false;
+  }
+
  public:
   void nextPermutation(vector<int> &nums) {
-    // FIXME
+    if (not nextPermutation(nums, 0)) {
+      reverse(nums.begin(), nums.end());
+    }
   }
 };
 
